@@ -1,9 +1,11 @@
 #!/usr/bin/python3
-"""Exports TODO data for a given user to JSON"""
+"""
+Exports TODO data for a given user to JSON
+"""
+
 import json
 import requests
 import sys
-
 
 if __name__ == "__main__":
     employee_id = sys.argv[1]
@@ -29,7 +31,6 @@ if __name__ == "__main__":
     }
 
     filename = "{}.json".format(employee_id)
-
     with open(filename, "w") as f:
         json.dump(data, f)
 

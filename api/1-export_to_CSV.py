@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 """Exports TODO data for a given user to CSV"""
+
 import csv
 import requests
 import sys
-
 
 if __name__ == "__main__":
     employee_id = sys.argv[1]

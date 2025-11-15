@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 """Fetches and displays TODO list progress for a given employee ID"""
+
 import requests
 import sys
-
 
 if __name__ == "__main__":
     employee_id = sys.argv[1]
@@ -10,11 +10,13 @@ if __name__ == "__main__":
     user = requests.get(
         "https://jsonplaceholder.typicode.com/users/{}".format(employee_id)
     ).json()
+
     todos = requests.get(
         "https://jsonplaceholder.typicode.com/todos?userId={}".format(employee_id)
     ).json()
 
     employee_name = user.get("name")
+
     total_tasks = len(todos)
     done_tasks = [t for t in todos if t.get("completed")]
 
