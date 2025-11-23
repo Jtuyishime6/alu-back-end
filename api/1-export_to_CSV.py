@@ -1,31 +1,36 @@
 #!/usr/bin/python3
-"""Exports TODO data for a given user to CSV"""
+
+"""Import libraries"""
 
 import csv
 import requests
 import sys
 
+
+"""Import libraries"""
+
 if __name__ == "__main__":
-    employee_id = sys.argv[1]
+    user_id = int(sys.argv[1])
+    todos_url = "https://jsonplaceholder.typicode.com/todos"
+    users_url = "https://jsonplaceholder.typicode.com/users/{}".format(user_id)
 
-    user = requests.get(
-        "https://jsonplaceholder.typicode.com/users/{}".format(employee_id)
-    ).json()
-    username = user.get("username")
+    file_content = []
 
-    todos = requests.get(
-        "https://jsonplaceholder.typicode.com/todos?userId={}".format(employee_id)
-    ).json()
+    todo_data = requests.get(todos_url).json()
 
-    filename = "{}.csv".format(employee_id)
+    employee_name = requests.get(users_url).json()["username"]
 
-    with open(filename, "w", newline="") as f:
-        writer = csv.writer(f, quoting=csv.QUOTE_ALL)
-        for task in todos:
-            writer.writerow([
-                employee_id,
-                username,
-                task.get("completed"),
-                task.get("title")
-            ])
+    for todo in todo_data:
+        if user_id == todo["userId"]:
+            file_content.append(
+                [str(user_id), employee_name, todo["completed"],
+                 todo["title"]])
 
+    print(file_content)
+    file_name = "{}.csv".format(user_id)
+    with open(file_name, 'w', newline='') as csv_file:
+        write = csv.writer(csv_file, quoting=csv.QUOTE_ALL)
+        for row in file_content:
+            for item in row:
+                str(item)
+            write.writerow(row)

@@ -1,36 +1,37 @@
 #!/usr/bin/python3
-"""
-Exports TODO data for a given user to JSON
-"""
+
+"""Import libraries"""
 
 import json
 import requests
 import sys
 
+
+"""Import libraries"""
+
 if __name__ == "__main__":
-    employee_id = sys.argv[1]
+    user_id = int(sys.argv[1])
+    todos_url = "https://jsonplaceholder.typicode.com/todos"
+    users_url = "https://jsonplaceholder.typicode.com/users/{}".format(user_id)
 
-    user = requests.get(
-        "https://jsonplaceholder.typicode.com/users/{}".format(employee_id)
-    ).json()
-    username = user.get("username")
+    todo_data = requests.get(todos_url).json()
 
-    todos = requests.get(
-        "https://jsonplaceholder.typicode.com/todos?userId={}".format(employee_id)
-    ).json()
+    employee_username = requests.get(users_url).json()["username"]
 
-    data = {
-        employee_id: [
-            {
-                "task": task.get("title"),
-                "completed": task.get("completed"),
-                "username": username
-            }
-            for task in todos
-        ]
-    }
+    info = []
+    result = {user_id: info}
 
-    filename = "{}.json".format(employee_id)
-    with open(filename, "w") as f:
-        json.dump(data, f)
+    for todo in todo_data:
+        if user_id == todo["userId"]:
+            info.append(
+                {
+                    "task": todo["title"],
+                    "completed": todo["completed"],
+                    "username": employee_username
+                }
+            )
 
+    print(result)
+    file = "{}.json".format(user_id)
+    with open(file, 'w') as files:
+        json.dump(result, files)

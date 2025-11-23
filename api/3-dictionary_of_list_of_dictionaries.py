@@ -1,34 +1,36 @@
 #!/usr/bin/python3
-"""
-Exports all employees' TODO data to JSON format.
-"""
+"""Import module"""
+
+import csv
 import json
 import requests
 
 
-if __name__ == "__main__":
-    users = requests.get(
-        "https://jsonplaceholder.typicode.com/users").json()
-    todos = requests.get(
-        "https://jsonplaceholder.typicode.com/todos").json()
+if __name__ == '__main__':
+    userId = 1
+    user_tasks = {}
+    url_todo = 'https://jsonplaceholder.typicode.com/todos/'
+    url_user = 'https://jsonplaceholder.typicode.com/users/'
+    users = requests.get(url_user).json()
 
-    all_data = {}
+    for userId in range(1, len(users) + 1):
+        todo = requests.get(url_todo, params={'userId': userId})
+        user = requests.get(url_user, params={'id': userId})
 
-    for user in users:
-        user_id = user.get("id")
-        username = user.get("username")
+        todo_dict_list = todo.json()
+        user_dict_list = user.json()
+        task_list = []
+        employee = user_dict_list[0].get('username')
 
-        user_tasks = [
-            {
-                "username": username,
-                "task": task.get("title"),
-                "completed": task.get("completed")
-            }
-            for task in todos if task.get("userId") == user_id
-        ]
+        for task in todo_dict_list:
+            status = task.get('completed')
+            title = task.get('title')
+            task_dict = {}
+            task_dict['task'] = title
+            task_dict['completed'] = status
+            task_dict['username'] = employee
+            task_list.append(task_dict)
+        user_tasks[userId] = task_list
 
-        all_data[str(user_id)] = user_tasks
-
-    with open("todo_all_employees.json", "w") as f:
-        json.dump(all_data, f)
-
+    with open("todo_all_employees.json", "w+") as jsonfile:
+        json.dump(user_tasks, jsonfile)
